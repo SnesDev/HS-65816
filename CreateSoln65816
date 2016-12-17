@@ -1,0 +1,66 @@
+#!/bin/bash
+## 65816 Solution Automator
+
+if [ "$1" = "-h" ]; then
+    echo "" 
+    echo '65816 Solution Automator Help:'
+    echo ''
+    echo "$0 [commands]"
+    echo "default:      Name of project"
+    echo "-h:           Help"
+    echo ""
+    exit 0
+fi
+
+#getting name of the Proj
+Prjname=$1
+if [ -z "$1" ]; then
+    echo "No Project Name Provided"
+    echo -n "Enter Project Name>> "
+    read Prjname
+fi
+cd /
+cd $Home
+cd HS_65816
+
+#creating dirs
+cd Projects
+mkdir $Prjname
+cd $Prjname
+mkdir rom
+mkdir src
+mkdir out
+
+#creating compile script
+
+echo "#$Prjname Soultion Compilation/Assembler Automator" > $Prjname
+echo "ProjName='Projects/$Prjname'" >> $Prjname
+
+echo "cd /" >> $Prjname
+echo "cd \$Home" >> $Prjname
+echo "cd HS_65816" >> $Prjname
+
+echo "sed -i -e \"s/~/Projects\/$Prjname\/src/g\" \$ProjName/src/main.asm" >> $Prjname
+
+echo "echo \"\" " >> $Prjname
+echo "bin/wla-65816 -vo \$ProjName/src/main.asm \$ProjName/out/$Prjname.obj" >> $Prjname
+echo "echo \"\" " >> $Prjname
+
+echo "echo \"\" " >> $Prjname
+echo "bin/wlalink -vr \$ProjName/out/$Prjname.link \$ProjName/rom/$Prjname.smc" >> $Prjname
+echo "echo \"\" " >> $Prjname
+
+echo "exit 0" >> $Prjname
+
+echo "[objects]" > out/$Prjname.link
+echo "Projects/$Prjname/out/$Prjname.obj" >> out/$Prjname.link
+
+chmod 755 $Prjname
+
+echo "; main.asm" > src/main.asm
+echo "; template: main_01.asm" >> src/main.asm
+echo "; Project: " >> src/main.asm
+echo "; Version: " >> src/main.asm
+echo "; main.asm" >> src/main.asm
+echo "" >> src/main.asm
+./../../Proj_temp/main_01.asm >> src/main.asm
